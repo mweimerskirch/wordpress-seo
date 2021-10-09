@@ -357,7 +357,7 @@ TPL;
 		@\exec( $command, $phpcs_output, $return );
 
 		$phpcs_output = \implode( \PHP_EOL, $phpcs_output );
-		echo $phpcs_output;
+		echo $phpcs_output
 
 		$above_threshold = true;
 		if ( \strpos( $phpcs_output, 'Coding standards checks have passed!' ) !== false ) {
