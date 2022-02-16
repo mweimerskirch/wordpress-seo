@@ -52,9 +52,10 @@ jobs:
       - name: Install Composer dependencies and generate vendor_prefixed directory
         uses: ramsey/composer-install@v2
 
-      # Remove packages which aren't needed for the linting and are not PHP cross-version compatible.
+      # Remove packages which were needed for the prefixing and are not PHP cross-version compatible.
+      # Also remove the test utils, so we don't need to work around the PHP version restrictions set by PHPUnit.
       - name: Delete dependencies which are not cross-version compatible
-        run: composer remove --dev humbug/php-scoper atanamo/php-codeshift phpunit/phpunit
+        run: composer remove --dev humbug/php-scoper atanamo/php-codeshift yoast/wp-test-utils
 
       - name: Regenerate the Composer autoload file
         run: composer du
