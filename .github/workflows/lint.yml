@@ -38,6 +38,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # The prefix-dependencies task only works on PHP 7.1 and we need to prefix our dependencies to make sure there
+      # are no parse errors in the adjusted code.
+      # So we initially install PHP 7.1, do a full install and then remove the packages related to the prefixing.
+      # After this, we switch to the PHP version in which we want to run the linting and delete the vendor directory.
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.2
+          ini-values: zend.assertions=1, error_reporting=-1, display_errors=On
+          coverage: none
+
+      - name: Install Composer dependencies and generate vendor_prefixed directory
+        uses: ramsey/composer-install@v2
+
+      # Remove packages which aren't needed for the linting and are not PHP cross-version compatible.
+      - name: Delete dependencies which are not cross-version compatible
+        run: composer remove --dev humbug/php-scoper atanamo/php-codeshift phpunit/phpunit
+
+      - name: Regenerate the Composer autoload file
+        run: composer du
+
+      - name: Remove the vendor directory
+        run: rm -rf vendor/*
+
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -46,18 +70,26 @@ jobs:
           coverage: none
           tools: cs2pr
 
-      # Remove packages which aren't needed for the linting and are not PHP cross-version compatible.
-      - name: Adjust Composer dependencies
-        run: composer remove --dev --no-update --no-scripts humbug/php-scoper atanamo/php-codeshift phpunit/phpunit
-
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-composer-dependencies
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v2
         with:
-          dependency-versions: "highest" # Install highest versions compatible with current PHP version. Forces a composer update.
           composer-options: "--no-scripts"
 
+      - name: Regenerate the Composer autoload file
+        run: composer du --no-scripts
 
       - name: Lint against parse errors
         run: composer lint -- --checkstyle | cs2pr
+
+#install:
+#  - |
+#    if [[ ${TRAVIS_PHP_VERSION:0:1} == "8" || $TRAVIS_PHP_VERSION == "nightly" ]]; then
+#      travis_retry composer install --no-interaction --ignore-platform-reqs --no-scripts --no-suggest
+#    elif [[ "$PHPUNIT" == "1" || "$COVERAGE" == "1" ]]; then
+#      # Run composer update as we have dev dependencies locked at PHP ^7.0 versions.
+#      travis_retry composer update --no-interaction --no-scripts
+#      travis_retry composer install --no-interaction --no-scripts
+#      travis_retry composer du --no-scripts
+#    fi
