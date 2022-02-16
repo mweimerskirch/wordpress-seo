@@ -53,10 +53,14 @@ jobs:
       - name: Install Composer dependencies and generate vendor_prefixed directory
         uses: ramsey/composer-install@v2
 
-      # Remove package which was only needed for the prefixing and are not PHP cross-version compatible.
-      # Also remove the test utils, so we don't need to work around the PHP version restrictions set by PHPUnit.
+      # Remove packages which are not PHP cross-version compatible.
+      # - humbug/php-scoper is only needed to actually do the prefixing, so won't be shipped anyway.
+      # - league/oauth2-client and its dependencies *are* the packages being prefixed, so linting the
+      #   prefixed versions is sufficient.
+      # - The test utilities are dev dependencies. Removing these, so we don't need to work around
+      #   the PHP version restrictions set by PHPUnit.
       - name: Delete dependencies which are not cross-version compatible
-        run: composer remove --dev humbug/php-scoper yoast/wp-test-utils phpunit/phpunit
+        run: composer remove --dev humbug/php-scoper league/oauth2-client yoast/wp-test-utils phpunit/phpunit
 
       - name: Regenerate the Composer autoload file
         run: composer du
