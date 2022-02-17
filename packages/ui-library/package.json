@@ -13,6 +13,7 @@
     "build:css": "postcss src/components/style.css --dir build",
     "build": "yarn clean:build && yarn build:ts && yarn build:css",
     "build:storybook": "build-storybook",
+    "lint": "eslint src --max-warnings=0",
     "storybook": "start-storybook -p 6006"
   },
   "devDependencies": {

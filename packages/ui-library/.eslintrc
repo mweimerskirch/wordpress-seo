@@ -1,5 +1,6 @@
 // TODO: replace with Yoast ESLint config.
 {
+  "root": true,
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
