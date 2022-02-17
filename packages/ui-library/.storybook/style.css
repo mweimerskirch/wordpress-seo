@@ -6,3 +6,4 @@
 @import "tailwindcss/utilities";
 
 @import "../src/elements/Button/button.css";
+@import "../src/elements/link/link.css";
