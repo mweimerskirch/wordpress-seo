@@ -65,6 +65,9 @@ jobs:
 #      - name: Regenerate the Composer autoload file
 #        run: composer du
 
+      - name: Move the linting tools from dev to no-dev
+        run: composer require yoast/yoastcs --no-scripts
+
       - name: Remove the vendor directory
         run: rm -rf vendor/*
 
@@ -82,9 +85,6 @@ jobs:
         uses: ramsey/composer-install@v2
         with:
           composer-options: "--no-dev --no-scripts"
-
-      - name: Composer require the linting tools
-        run: composer require yoast/yoastcs --no-scripts
 
 #      - name: Regenerate the Composer autoload file
 #        run: composer du --no-scripts
