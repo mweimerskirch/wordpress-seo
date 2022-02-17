@@ -76,15 +76,15 @@ jobs:
           coverage: none
           tools: cs2pr
 
-      - name: Composer require the linting tools
-        run: composer require yoast/yoastcs --no-update --no-scripts
-
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-composer-dependencies
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v2
         with:
           composer-options: "--no-dev --no-scripts"
+
+      - name: Composer require the linting tools
+        run: composer require yoast/yoastcs --no-scripts
 
 #      - name: Regenerate the Composer autoload file
 #        run: composer du --no-scripts
