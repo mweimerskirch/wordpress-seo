@@ -9,4 +9,13 @@ export const parameters = {
 			date: /Date$/,
 		},
 	},
+	docs: {
+		transformSource: ( src, storyContext ) => {
+			try {
+				return storyContext.unboundStoryFn( storyContext ).template;
+			} catch ( e ) {
+				return null;
+			}
+		},
+	},
 };
